@@ -18,10 +18,6 @@ jobs:
           npm run build
           ls -a
 
-      - name: Copy Favicon
-        run: |
-          cp static/favicon.svg build
-
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
