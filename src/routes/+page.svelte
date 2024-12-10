@@ -47,7 +47,7 @@
         appearance: none;
         color: var(--baseFg);
         border: 1px solid var(--baseFg);
-        line-height: 1;
+        line-height: 1.1;
         outline: 0;
         padding: 0.75em 2.5em 0.65em 0.75em;
         border-radius: var(--radius);
