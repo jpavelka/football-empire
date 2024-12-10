@@ -108,10 +108,10 @@
         <label for={`${t}Win`}>
             <table style=display:inline-table;font-size:14pt;><tbody>
                 {#if val > 0}
-                    <tr style=height:60px><td>
+                    <tr style=height:80px><td style=width:180px>
                         <image height=50 width=50 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
                     </td></tr>
-                    <tr style=height:25px><td>
+                    <tr style=height:25px;overflow-x:scroll;><td>
                         {$teamInfo[val].school}
                         <button style='padding:0 2pt;margin-left:5px' onclick={() => {
                             const [v, c] = t === 'team1' ? [select1Value, team1Win] : [select2Value, team2Win]
@@ -129,7 +129,7 @@
                         }}>x</button>
                     </td></tr>
                 {:else}
-                    <tr style=height:60px><td></td></tr>
+                    <tr style=height:80px><td style=width:180px></td></tr>
                     <tr style=height:25px><td><em>No selection</em></td></tr>
                 {/if}
             </tbody></table>
@@ -141,7 +141,7 @@
             <span style=padding:20pt>vs.</span>
         {/if}
     {/each}
-    <div>
+    <div style=margin-top:0.5rem;>
         <button
             id=goButton
             disabled={!(team1Win || team2Win) || select1Value < 0 || select2Value < 0}
