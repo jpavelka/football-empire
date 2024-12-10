@@ -35,6 +35,10 @@
     :global(option) {
         font-size: 12pt;
     }
+    :global(option:disabled) {
+        color: #ccc;
+        background-color: #eee;
+    }
     :global(select) {
         --radius: 2px;
         --baseFg: dimgray;

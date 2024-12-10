@@ -23,7 +23,9 @@
                 select2Value = -1
             }
             for (const tId of select2Disabled) {
-                document.getElementById(`select2${tId}`).disabled = false
+                try {
+                    document.getElementById(`select2${tId}`).disabled = false
+                } catch {}
             }
             document.getElementById(`select2${select1Value}`).disabled = true
             select2Disabled = [select1Value]
@@ -87,6 +89,9 @@
     <div style=font-size:32pt;>Winner!</div>
     <img height=80 width=80 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${$remainingTeams[0]}.png`} />
     <div style=font-size:16pt>{$teamInfo[$remainingTeams[0]].school} {$teamInfo[$remainingTeams[0]].mascot}</div>
+    <div style=margin-top:1rem>
+        <button onclick={() => selectingTeams.update(() => true)}>New Game</button>
+    </div>
 {:else}
     <select id=team1Select bind:value={select1Value} onchange={select1Change}>
         <option value={-1}>--Attacking Team--</option>
@@ -101,44 +106,67 @@
         {/each}
     </select>
     <div style=font-size:16pt>Select winner:</div>
-    {#each [[select1Value, 'team1'], [select2Value, 'team2']] as [val, t]}
-        {#if t === 'team1'}
-            <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
-        {/if}
-        <label for={`${t}Win`}>
-            <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:100px>
-            {#if val > 0}
-                <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
-                <span style=height:1.5rem;>
-                    {$teamInfo[val].school}
-                    <button style='padding:0 2pt;margin-left:5px' onclick={() => {
-                        const [v, c] = t === 'team1' ? [select1Value, team1Win] : [select2Value, team2Win]
-                        if (t === 'team1') {
-                            select1Value = -1;
-                            setTimeout(() => {
-                                team1Win = false;
-                            }, 50)
-                        } else {
-                            select2Value = -1;
-                            setTimeout(() => {
-                                team2Win = false;
-                            }, 50)
-                        };
-                    }}>x</button>
-                </span>                
-            {:else}
-                <div style=width:100%;height:60px></div>
-                <span style=height:1.5rem;><em>No selection</em></span>
+    <div style=display:flex;justify-content:center;>
+        {#each [[select1Value, 'team1'], [select2Value, 'team2']] as [val, t]}
+            {#if t === 'team1'}
+                <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
             {/if}
-            </span>
-        </label>
-        {#if t === 'team2'}
-            <input type=checkbox bind:checked={team2Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
-        {/if}
-        {#if t === 'team1'}
-            <span style=padding:20pt;font-size:20pt;>vs.</span>
-        {/if}
-    {/each}
+            <label for={`${t}Win`}>
+                <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:100px;>
+                {#if val > 0}
+                    <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
+                    <span style=height:1.5rem;>
+                        {$teamInfo[val].school}
+                        <button style='padding:0 2pt;margin-left:5px' onclick={() => {
+                            const [v, c] = t === 'team1' ? [select1Value, team1Win] : [select2Value, team2Win]
+                            if (t === 'team1') {
+                                select1Value = -1;
+                                setTimeout(() => {
+                                    team1Win = false;
+                                }, 50)
+                            } else {
+                                select2Value = -1;
+                                setTimeout(() => {
+                                    team2Win = false;
+                                }, 50)
+                            };
+                        }}>x</button>
+                    </span>                
+                {:else}
+                    <span style=width:100%;height:60px>
+                        <button onclick={() => {
+                            let iterNum = 0;
+                            const randomTeam = () => {
+                                const availableTeams = $remainingTeams.filter(
+                                    x => ![parseInt(select1Value), parseInt(select2Value)].includes(parseInt(x))
+                                )
+                                const randomId = availableTeams[Math.floor(Math.random() * availableTeams.length)];
+                                if (t === 'team1'){
+                                    select1Value = randomId;
+                                    select1Change();
+                                } else {
+                                    select2Value = randomId;
+                                }
+                                if (iterNum < 13) {
+                                    iterNum += 1
+                                    setTimeout(randomTeam, 50)
+                                }
+                            }
+                            randomTeam()
+                        }}>?</button>
+                    </span>
+                    <span style=height:1.5rem;><em>No selection</em></span>
+                {/if}
+                </span>
+            </label>
+            {#if t === 'team2'}
+                <input type=checkbox bind:checked={team2Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
+            {/if}
+            {#if t === 'team1'}
+                <span style=padding:20pt;font-size:20pt;>vs.</span>
+            {/if}
+        {/each}
+    </div>
     <div style=margin-top:0.5rem;>
         <button
             id=goButton
@@ -177,7 +205,7 @@
                     buttonClick()
                 }
             }}
-        /> 
+        />
     {/each}
 </svg>
 <div style=margin-top:1rem>
