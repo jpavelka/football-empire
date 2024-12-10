@@ -140,6 +140,9 @@
                                 const availableTeams = $remainingTeams.filter(
                                     x => ![parseInt(select1Value), parseInt(select2Value)].includes(parseInt(x))
                                 )
+                                if (availableTeams.length === 0) {
+                                    return
+                                }
                                 const randomId = availableTeams[Math.floor(Math.random() * availableTeams.length)];
                                 if (t === 'team1'){
                                     select1Value = randomId;
