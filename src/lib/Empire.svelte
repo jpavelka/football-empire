@@ -106,39 +106,37 @@
             <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
         {/if}
         <label for={`${t}Win`}>
-            <table style=display:inline-table;font-size:14pt;><tbody>
-                {#if val > 0}
-                    <tr style=height:80px><td style=width:180px>
-                        <image height=50 width=50 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
-                    </td></tr>
-                    <tr style=height:25px;overflow-x:scroll;><td>
-                        {$teamInfo[val].school}
-                        <button style='padding:0 2pt;margin-left:5px' onclick={() => {
-                            const [v, c] = t === 'team1' ? [select1Value, team1Win] : [select2Value, team2Win]
-                            if (t === 'team1') {
-                                select1Value = -1;
-                                setTimeout(() => {
-                                    team1Win = false;
-                                }, 50)
-                            } else {
-                                select2Value = -1;
-                                setTimeout(() => {
-                                    team2Win = false;
-                                }, 50)
-                            };
-                        }}>x</button>
-                    </td></tr>
-                {:else}
-                    <tr style=height:80px><td style=width:180px></td></tr>
-                    <tr style=height:25px><td><em>No selection</em></td></tr>
-                {/if}
-            </tbody></table>
+            <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:100px>
+            {#if val > 0}
+                <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
+                <span style=height:1.5rem;>
+                    {$teamInfo[val].school}
+                    <button style='padding:0 2pt;margin-left:5px' onclick={() => {
+                        const [v, c] = t === 'team1' ? [select1Value, team1Win] : [select2Value, team2Win]
+                        if (t === 'team1') {
+                            select1Value = -1;
+                            setTimeout(() => {
+                                team1Win = false;
+                            }, 50)
+                        } else {
+                            select2Value = -1;
+                            setTimeout(() => {
+                                team2Win = false;
+                            }, 50)
+                        };
+                    }}>x</button>
+                </span>                
+            {:else}
+                <div style=width:100%;height:60px></div>
+                <span style=height:1.5rem;><em>No selection</em></span>
+            {/if}
+            </span>
         </label>
         {#if t === 'team2'}
             <input type=checkbox bind:checked={team2Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
         {/if}
         {#if t === 'team1'}
-            <span style=padding:20pt>vs.</span>
+            <span style=padding:20pt;font-size:20pt;>vs.</span>
         {/if}
     {/each}
     <div style=margin-top:0.5rem;>
