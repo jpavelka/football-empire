@@ -126,7 +126,7 @@
 {:else}
     <select id=team1Select bind:value={select1Value} onchange={select1Change}>
         <option value={-1}>--Attacking Team--</option>
-        {#each $remainingTeams as tId}
+        {#each $remainingTeams.sort((a, b) => $teamInfo[a].school.localeCompare($teamInfo[b].school)) as tId}
             <option value={tId}>{$teamInfo[tId].school}</option>
         {/each}
     </select>
@@ -143,7 +143,7 @@
                 <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
             {/if}
             <label for={`${t}Win`}>
-                <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:100px;>
+                <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:160px;>
                 {#if val > 0}
                     <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
                     <span style=height:1.5rem;>
@@ -164,8 +164,8 @@
                         }}>x</button>
                     </span>                
                 {:else}
-                    <span style=width:100%;height:60px>
-                        <button onclick={() => {
+                    <span style=width:100%;height:60px;>
+                        <button style='padding:0.5rem 0.6rem;' onclick={() => {
                             let iterNum = 0;
                             const randomTeam = () => {
                                 const availableTeams = $remainingTeams.filter(
@@ -222,7 +222,7 @@
 
 <div style=height:40px;padding-top:0.25rem;display:flex;justify-content:center;font-size:12pt>
     {#if historyInd >= 0}
-        <span style=align-content:center>Last: </span>
+        <span style=align-content:center;padding-left:0.5rem;>Last: </span>
         <img
             style={`height:40px;width:40px;opacity:${history[historyInd][1] === '>' ? 1 : 0.2};padding:0 0.5rem;`}
             src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${history[historyInd][0]}.png`}
@@ -235,7 +235,7 @@
     {/if}
 </div>
 
-<svg height={$height} width={$width}>
+<svg height={$height} width={$width} style=margin-top:-2rem;>
     <BaseMap />
     {#key $remainingTeams}
         {#each $remainingTeams as tId}
