@@ -122,12 +122,12 @@ export const getInitialTerritories = (allTeams) => {
                         const teamSide = pointGreatLessEqLine([t.projectedX, t.projectedY], m, midpoint[0], midpoint[1]);
                         let corners = []
                         for (const i in bbRel) {
-                            if (bbRel[i] !== teamSide) {
+                            if (bbRel[i] === teamSide) {
                                 corners.push(i)
                             }
                         }
-                        if (corners.length === 4) {
-                            clips[t.id].push(bbCorners)
+                        if (corners.length === 0) {
+                            clips[t.id].push([])
                         }
                     }
                 }
