@@ -71,5 +71,10 @@
         linear-gradient(-225deg, transparent 50%, var(--accentFg) 50%),
         linear-gradient(var(--accentFg) 42%, var(--accentBg) 42%);
     }
+
+    :global(body) {
+        margin: 0;
+        padding: 0.5rem
+    }
 </style>
   

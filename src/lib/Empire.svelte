@@ -7,11 +7,11 @@
 
     getInitialTerritories($allTeams);
     remainingTeams.update(() => {
-        return $allTeams.map(t => t).sort((a, b) => {
-            return $teamInfo[a].school > $teamInfo[b].school ? 1 : -1
-        })
+        return $allTeams.map(t => t)
     });
-    const imgSize = 25
+    let history = [];
+    let historyInd = -1;
+    const imgSize = 25;
     let select1Value;
     let select2Value;
     let team1Win;
@@ -53,6 +53,11 @@
     }
     const buttonClick = () => {
         const [winId, loseId] = (team1Win ? [select1Value, select2Value] : [select2Value, select1Value]);
+        if (historyInd !== history.length - 1) {
+            history = history.slice(0, historyInd + 1);
+        }
+        history.push([select1Value, team1Win ? '>' : '<', select2Value, $teamInfo[loseId].conquered]);
+        historyInd += 1;
         remainingTeams.update(teams => {
             return teams.filter(x => x !== loseId)
         })
@@ -65,6 +70,32 @@
         select2Value = -1;
         team1Win = false;
         team2Win = false;
+    }    
+    const backClick = () => {
+        const [t1, direction, t2, conquered] = history[historyInd];
+        const [winner, loser] = direction === '>' ? [t1, t2] : [t2, t1];
+        remainingTeams.update(teams => {
+            return teams.concat(loser)
+        })
+        teamInfo.update(t => {
+            t[loser].conquered = conquered;
+            t[winner].conquered = t[winner].conquered.filter(x => !conquered.includes(x));
+            return t
+        })
+        historyInd -= 1;
+    }
+    const forwardClick = () => {
+        const [t1, direction, t2, conquered] = history[historyInd + 1];
+        const [winner, loser] = direction === '>' ? [t1, t2] : [t2, t1];
+        remainingTeams.update(teams => {
+            return teams.filter(t => t !== loser);
+        })
+        teamInfo.update(t => {
+            t[winner].conquered = t[winner].conquered.concat(conquered)
+            t[loser].conquered = []
+            return t
+        })
+        historyInd += 1;
     }
     const imgClick = (tId) => { 
         if ($remainingTeams.includes(tId)) {
@@ -172,14 +203,37 @@
     </div>
     <div style=margin-top:0.5rem;>
         <button
+            disabled={historyInd < 0}
+            onclick={backClick}
+        >{'<<'}</button>
+        <button
             id=goButton
             disabled={!(team1Win || team2Win) || select1Value < 0 || select2Value < 0}
             onclick={buttonClick}
         >
-            Update Map
+            Continue
         </button>
+        <button
+            disabled={historyInd + 1 === history.length}
+            onclick={forwardClick}
+        >{'>>'}</button>
     </div>
 {/if}
+
+<div style=height:40px;padding-top:0.25rem;display:flex;justify-content:center;font-size:12pt>
+    {#if historyInd >= 0}
+        <span style=align-content:center>Last: </span>
+        <img
+            style={`height:40px;width:40px;opacity:${history[historyInd][1] === '>' ? 1 : 0.2};padding:0 0.5rem;`}
+            src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${history[historyInd][0]}.png`}
+        >
+        <span style=align-content:center>{history[historyInd][1]}</span>
+        <img
+        style={`height:40px;width:40px;opacity:${history[historyInd][1] === '<' ? 1 : 0.2};padding:0 0.5rem;`}
+            src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${history[historyInd][2]}.png`}
+        >
+    {/if}
+</div>
 
 <svg height={$height} width={$width}>
     <BaseMap />
@@ -212,6 +266,6 @@
     {/each}
 </svg>
 <div style=margin-top:1rem>
-    <button onclick={() => selectingTeams.update(() => true)}>New Map</button>
+    <button onclick={() => selectingTeams.update(() => true)}>New Game</button>
 </div>
 </div>

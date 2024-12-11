@@ -3,9 +3,9 @@
     import { teamInfo, selectingTeams, height, width, allTeams } from '$lib/stores';
     import MappedTeamIcon from '$lib/MappedTeamIcon.svelte';
   
-    const conferences = [...new Set(Object.values($teamInfo).map(t => t.conference))].sort((a, b) => a > b ? 1 : -1);
+    const conferences = [...new Set(Object.values($teamInfo).map(t => t.conference))].sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
     const sortedTeamsAndIds = Object.keys($teamInfo).map(tId => [tId, $teamInfo[tId].school]).sort((a, b) => {
-      return a[1] > b[1] ? 1 : -1
+      return a[1].toLowerCase() > b[1].toLowerCase() ? 1 : -1
     })
     let selectedConference;
     const inList = (tId) => {
