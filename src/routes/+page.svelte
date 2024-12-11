@@ -31,6 +31,7 @@
         box-shadow: none;
         color: #bbb;
         opacity: 0.6;
+        transform: translateY(0);
     }
     :global(option) {
         font-size: 12pt;

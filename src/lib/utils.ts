@@ -48,15 +48,15 @@ export const getInitialTerritories = (allTeams) => {
                 const t = ts[teams[0]]
                 t.originalTerritory.push({
                     pathCoords: shInf.svgCoords,
-                    masks: []
+                    clips: []
                 })
                 return ts
             })
             continue
         }
-        const masks = {}
+        const clips = {}
         for (const tId of teams) {
-            masks[tId] = []
+            clips[tId] = []
         }
         for (const tId1 of teams) {
             for (const tId2 of teams) {
@@ -83,7 +83,7 @@ export const getInitialTerritories = (allTeams) => {
                         const teamSide = pointGreatLessEqLine([t.projectedX, t.projectedY], m, midpoint[0], midpoint[1]);
                         let corners = []
                         for (const i in bbRel) {
-                            if (bbRel[i] !== teamSide) {
+                            if (bbRel[i] === teamSide) {
                                 corners.push(i)
                             }
                         }
@@ -115,7 +115,7 @@ export const getInitialTerritories = (allTeams) => {
                         if (tCoords.length === corners.length && corners.length > 0) {
                             tCoords = addIntersectionPoints(tCoords, intersections)
                         }
-                        masks[t.id].push(tCoords)
+                        clips[t.id].push(tCoords)
                     }
                 } else {
                     for (const t of [t1, t2]) {
@@ -127,7 +127,7 @@ export const getInitialTerritories = (allTeams) => {
                             }
                         }
                         if (corners.length === 4) {
-                            masks[t.id].push(bbCorners)
+                            clips[t.id].push(bbCorners)
                         }
                     }
                 }
@@ -138,7 +138,7 @@ export const getInitialTerritories = (allTeams) => {
                 const t = ts[tId]
                 t.originalTerritory.push({
                     pathCoords: shInf.svgCoords,
-                    masks: masks[t.id]
+                    clips: clips[t.id]
                 })
             }
             return ts
