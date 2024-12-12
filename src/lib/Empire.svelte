@@ -52,11 +52,16 @@
             };
         }
     }
+    let svgTime = -1;
+    const svgTimeDiff = 2;
     const setLastWinner = (winner) => {
         lastWinner = winner;
         setTimeout(() => {
             lastWinner = ''
-        }, 3000)
+        }, 2000);
+        if (svgEl.getCurrentTime() > svgTime + svgTimeDiff) {
+            svgTime = svgEl.getCurrentTime();
+        }
     }
     const buttonClick = () => {
         const [winId, loseId] = (team1Win ? [select1Value, select2Value] : [select2Value, select1Value]);
@@ -253,7 +258,13 @@
         <BaseMap />
         {#key $remainingTeams}
             {#each $remainingTeams as tId}
-                <TeamTerritory tId={tId} changed={lastWinner === tId} svgEl={svgEl}/>
+                <TeamTerritory
+                    tId={tId}
+                    svgEl={svgEl}
+                    pulse={lastWinner === tId && svgEl.getCurrentTime() < svgTime + 0.1}
+                    colorFadeIds={historyInd >= 0 ? history[historyInd][3] : []}
+                    previousColor={historyInd >= 0 ? $teamInfo[history[historyInd][0] === tId ? history[historyInd][2] : history[historyInd][0]].color : ''}
+                />
             {/each}
         {/key}
         {#each $allTeams as tId}
