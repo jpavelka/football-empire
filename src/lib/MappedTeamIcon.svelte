@@ -1,15 +1,17 @@
 <script lang="ts">
     import { teamInfo } from './stores';
 
-    export let tId
-    export let imgSize
-    export let imgId = undefined
-    export let opacity = 1
-    export let onclick = undefined
-    export let ondblclick = undefined
+    export let tId;
+    export let imgSize;
+    export let imgId = undefined;
+    export let opacity = 1;
+    export let onclick = undefined;
+    export let ondblclick = undefined;
+    export let noClick = false;
 </script>
 
 <image
+    style={noClick ? 'pointer-events:none' : ''}
     id={imgId}
     x={$teamInfo[tId].projectedX - imgSize / 2}
     y={$teamInfo[tId].projectedY - imgSize / 2}
@@ -19,4 +21,4 @@
     opacity={opacity}
     onclick={onclick}
     ondblclick={ondblclick}
-/>   
+/>

@@ -32,6 +32,7 @@
             </clipPath>
         {/each}
         <path
+            tId={tId}
             id={`territory-${tId}-${i}`}
             style=transform-origin:center;
             d={coordsToSvgPathD(t.pathCoords)}
@@ -39,20 +40,20 @@
             opacity=0.5
             clip-path={clipId(cId, i, t.clips.length - 1, true)}
         >
-        {#if pulse}
-            <animateTransform attributeName="transform" begin={svgTime} type="scale" dur="0.5s" from="1" to={svgScale} repeatCount="1"/>
-            <animateTransform attributeName="transform" begin={svgTime + 0.5} type="scale" dur="0.5s" from={svgScale} to={svgScale} repeatCount="1"/>
-            <animateTransform attributeName="transform" begin={svgTime + 1} type="scale" dur="1s" from={svgScale} to="1" repeatCount="1"/>
-            {#if colorFadeIds.includes(cId)}
-                <animate
-                    attributeName='fill'
-                    begin={svgTime}
-                    values={`${previousColor};${$teamInfo[tId].color}`}
-                    dur='2s'
-                    repeatCount=1
-                />
+            {#if pulse}
+                <animateTransform attributeName="transform" begin={svgTime} type="scale" dur="0.5s" from="1" to={svgScale} repeatCount="1"/>
+                <animateTransform attributeName="transform" begin={svgTime + 0.5} type="scale" dur="0.5s" from={svgScale} to={svgScale} repeatCount="1"/>
+                <animateTransform attributeName="transform" begin={svgTime + 1} type="scale" dur="1s" from={svgScale} to="1" repeatCount="1"/>
+                {#if colorFadeIds.includes(cId)}
+                    <animate
+                        attributeName='fill'
+                        begin={svgTime}
+                        values={`${previousColor};${$teamInfo[tId].color}`}
+                        dur='2s'
+                        repeatCount=1
+                    />
+                {/if}
             {/if}
-        {/if}
         </path>
     {/each}
 {/each}

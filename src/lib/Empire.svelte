@@ -3,6 +3,7 @@
     import { height, width, teamInfo, remainingTeams, allTeams, selectingTeams } from './stores';
     import TeamTerritory from './TeamTerritory.svelte';
     import MappedTeamIcon from './MappedTeamIcon.svelte';
+    import Arrow from './Arrow.svelte';
     import { getInitialTerritories } from './utils';
 
     getInitialTerritories($allTeams);
@@ -18,6 +19,7 @@
     let team2Win;
     $: select2Disabled = [];
     let lastWinner = '';
+    let logoClickable = true;
     const select1Change = () => {
         if (select1Value > 0) {
             if (select1Value === select2Value) {
@@ -83,6 +85,7 @@
         select2Value = -1;
         team1Win = false;
         team2Win = false;
+        arrowCoords = [];
     }    
     const backClick = () => {
         const [t1, direction, t2, conquered] = history[historyInd];
@@ -129,6 +132,8 @@
         }
     }
     let svgEl;
+    let arrowCoords = [];
+    let animate = true;
 </script>
 
 <div style=text-align:center>
@@ -192,16 +197,56 @@
                                         if (t === 'team1'){
                                             select1Value = randomId;
                                             select1Change();
+                                            if ($remainingTeams.length === 2) {
+                                                select2Value = $remainingTeams.filter(tId => tId !== select1Value)[0];
+                                            }
                                         } else {
                                             select2Value = randomId;
+                                            if ($remainingTeams.length === 2) {
+                                                select1Value = $remainingTeams.filter(tId => tId !== select2Value)[0];
+                                                select1Change();
+                                            }
                                         }
-                                        if (iterNum < 13) {
+                                        if (iterNum < (animate ? 13 : 0)) {
                                             iterNum += 1
                                             setTimeout(randomTeam, 50)
                                         }
                                     }
                                     randomTeam()
                                 }}>?</button>
+                                {#if t === 'team2'}
+                                    <button style='padding:0.5rem 0.6rem;' disabled={select1Value < 0} onclick={() => {
+                                        logoClickable = false;
+                                        const angle = 2 * Math.PI * Math.random();
+                                        let vec = [Math.cos(angle), Math.sin(angle)];
+                                        const svgRect = svgEl.getBoundingClientRect();
+                                        const teamX = $teamInfo[select1Value].projectedX;
+                                        const teamY = $teamInfo[select1Value].projectedY;
+                                        const maxMultX = vec[0] < 0 ? -teamX / vec[0] : ((svgRect.right - svgRect.left) - teamX) / vec[0];
+                                        const maxMultY = vec[1] < 0 ? -teamY / vec[1] : ((svgRect.bottom - svgRect.top) - teamY) / vec[1];
+                                        const stepSize = 2;
+                                        let mult = stepSize;
+                                        let checkPoint;
+                                        setTimeout(() => {
+                                            while(mult < Math.min(maxMultX, maxMultY)) {
+                                                const multVec = [vec[0] * mult, vec[1] * mult];
+                                                checkPoint = [
+                                                    teamX + multVec[0],
+                                                    teamY + multVec[1]
+                                                ]
+                                                const vecEndEl = document.elementFromPoint(svgRect.left + checkPoint[0], svgRect.top + checkPoint[1]);
+                                                const possibleId = vecEndEl?.attributes.tId?.value
+                                                if (!!possibleId && possibleId !== select1Value) {
+                                                    select2Value = possibleId;
+                                                    break
+                                                }
+                                                mult += stepSize;
+                                            }
+                                            arrowCoords = [[teamX, teamY], checkPoint];
+                                            logoClickable = true;
+                                        }, 100)
+                                    }}>spin</button>
+                                {/if}
                             </span>
                             <span style=height:1.5rem;><em>No selection</em></span>
                         {/if}
@@ -253,7 +298,6 @@
             >
         {/if}
     </div>
-
     <svg bind:this={svgEl} height={$height} width={$width} style=margin-top:-2rem;>
         <BaseMap />
         {#key $remainingTeams}
@@ -261,7 +305,7 @@
                 <TeamTerritory
                     tId={tId}
                     svgEl={svgEl}
-                    pulse={lastWinner === tId && svgEl.getCurrentTime() < svgTime + 0.1}
+                    pulse={animate && (lastWinner === tId && svgEl.getCurrentTime() < svgTime + 0.1)}
                     colorFadeIds={historyInd >= 0 ? history[historyInd][3] : []}
                     previousColor={historyInd >= 0 ? $teamInfo[history[historyInd][0] === tId ? history[historyInd][2] : history[historyInd][0]].color : ''}
                 />
@@ -269,10 +313,11 @@
         {/key}
         {#each $allTeams as tId}
             {#if !$remainingTeams.includes(tId)}
-                <MappedTeamIcon 
+                <MappedTeamIcon
                     tId={tId}
                     imgSize={imgSize}
                     opacity={0.15}
+                    noClick={!logoClickable}
                 />   
             {/if}
         {/each}
@@ -280,6 +325,7 @@
             <MappedTeamIcon 
                 tId={tId}
                 imgSize={imgSize}
+                noClick={!logoClickable}
                 onclick={() => imgClick(tId)}
                 ondblclick={() => {
                     imgClick(tId)
@@ -289,8 +335,89 @@
                 }}
             />
         {/each}
+        {#key arrowCoords}
+            {#if arrowCoords.length === 2}
+                <Arrow
+                    coords={arrowCoords}
+                    svgEl={svgEl}
+                    animate={animate}
+                />
+            {/if}
+        {/key}
     </svg>
     <div style=margin-top:1rem>
         <button onclick={() => selectingTeams.update(() => true)}>New Game</button>
     </div>
+    <div style=margin-top:1rem;display:inline-flex;align-items:center;>
+        <span style=font-size:14pt;padding-right:0.5rem;>Animations:</span>
+        <label class="switch">
+            <input type="checkbox" bind:checked={animate}>
+            <span class="slider round"></span>
+        </label>
+    </div>
 </div>
+
+<style>
+    /* The switch - the box around the slider */
+    .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
