@@ -34,7 +34,7 @@
             attributeName="transform"
             attributeType="XML"
             type="rotate"
-            from={`${-angle} ${coords[0].join(',')}`}
+            from={`0 ${coords[0].join(',')}`}
             to={`1080 ${coords[0].join(',')}`}
             begin={svgTime}
             dur="1s"
