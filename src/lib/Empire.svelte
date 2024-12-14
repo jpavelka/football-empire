@@ -13,25 +13,24 @@
     let history = [];
     let historyInd = -1;
     const imgSize = 25;
-    let select1Value;
-    let select2Value;
+    let selectValues = {team1: -1, team2: -1};
     let team1Win;
     let team2Win;
     $: select2Disabled = [];
     let lastWinner = '';
     let logoClickable = true;
     const select1Change = () => {
-        if (select1Value > 0) {
-            if (select1Value === select2Value) {
-                select2Value = -1
+        if (selectValues.team1 > 0) {
+            if (selectValues.team1 === selectValues.team2) {
+                selectValues.team2 = -1
             }
             for (const tId of select2Disabled) {
                 try {
                     document.getElementById(`select2${tId}`).disabled = false
                 } catch {}
             }
-            document.getElementById(`select2${select1Value}`).disabled = true
-            select2Disabled = [select1Value]
+            document.getElementById(`select2${selectValues.team1}`).disabled = true
+            select2Disabled = [selectValues.team1]
         }
     }
     const checkChange = (t) => {
@@ -66,11 +65,11 @@
         }
     }
     const buttonClick = () => {
-        const [winId, loseId] = (team1Win ? [select1Value, select2Value] : [select2Value, select1Value]);
+        const [winId, loseId] = (team1Win ? [selectValues.team1, selectValues.team2] : [selectValues.team2, selectValues.team1]);
         if (historyInd !== history.length - 1) {
             history = history.slice(0, historyInd + 1);
         }
-        history.push([select1Value, team1Win ? '>' : '<', select2Value, $teamInfo[loseId].conquered]);
+        history.push([selectValues.team1, team1Win ? '>' : '<', selectValues.team2, $teamInfo[loseId].conquered]);
         historyInd += 1;
         remainingTeams.update(teams => {
             return teams.filter(x => x !== loseId)
@@ -81,8 +80,8 @@
             return t
         })
         setLastWinner(winId);
-        select1Value = -1;
-        select2Value = -1;
+        selectValues.team1 = -1;
+        selectValues.team2 = -1;
         team1Win = false;
         team2Win = false;
         arrowCoords = [];
@@ -117,93 +116,82 @@
     }
     const imgClick = (tId) => { 
         if ($remainingTeams.includes(tId)) {
-            if (select1Value < 0) {
-                select1Value = tId
+            if (selectValues.team1 < 0) {
+                selectValues.team1 = tId
                 select1Change()
-            } else if (select1Value === tId) {
+            } else if (selectValues.team1 === tId) {
                 team1Win = true;
                 team2Win = false;
-            } else if (select2Value === tId) {
+            } else if (selectValues.team2 === tId) {
                 team2Win = true;
                 team1Win = false;
-            } else if (select2Value < 0 && select1Value !== tId) {
-                select2Value = tId
+            } else if (selectValues.team2 < 0 && selectValues.team1 !== tId) {
+                selectValues.team2 = tId
             }
         }
     }
     let svgEl;
     let arrowCoords = [];
     let animate = true;
+
+    $: console.log(selectValues)
 </script>
 
 <div style=text-align:center>
-    <div style=height:145px>
+    <div style=height:130px;margin-top:0.5rem;>
         {#if $remainingTeams.length === 1}
-            <div style=font-size:30pt;>Winner!</div>
-            <img height=75 width=75 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${$remainingTeams[0]}.png`} />
+        <div style=font-size:20pt;font-weight:bold;>Winner!</div>
+            <img height=65 width=65 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${$remainingTeams[0]}.png`} />
             <div style=font-size:16pt>{$teamInfo[$remainingTeams[0]].school} {$teamInfo[$remainingTeams[0]].mascot}</div>
         {:else}
-            <select id=team1Select bind:value={select1Value} onchange={select1Change}>
-                <option value={-1}>--Attacking Team--</option>
-                {#each $remainingTeams.sort((a, b) => $teamInfo[a].school.localeCompare($teamInfo[b].school)) as tId}
-                    <option value={tId}>{$teamInfo[tId].school}</option>
-                {/each}
-            </select>
-            <select id=team2Select bind:value={select2Value}>
-                <option value={-1}>--Defending Team--</option>
-                {#each $remainingTeams as tId}
-                    <option id={`select2${tId}`} value={tId}>{$teamInfo[tId].school}</option>
-                {/each}
-            </select>
-            <div style=font-size:16pt>Select winner:</div>
+            <div style=font-size:16pt>Select {Math.min(...Object.values(selectValues)) > 0 ? 'Winner' : 'Matchup'}</div>
             <div style=display:flex;justify-content:center;>
-                {#each [[select1Value, 'team1'], [select2Value, 'team2']] as [val, t]}
+                {#each ['team1', 'team2'] as t}
                     {#if t === 'team1'}
-                        <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
+                        <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={selectValues[t] < 0} onchange={() => checkChange(t)}/>
                     {/if}
                     <label for={`${t}Win`}>
                         <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:160px;>
-                        {#if val > 0}
-                            <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${val}.png`}/>
-                            <span style=height:1.5rem;>
-                                {$teamInfo[val].school}
-                                <button style='padding:0 2pt;margin-left:5px' onclick={() => {
-                                    const [v, c] = t === 'team1' ? [select1Value, team1Win] : [select2Value, team2Win]
+                        {#if selectValues[t] > 0}
+                            <span style=display:flex>
+                                <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${selectValues[t]}.png`}/>
+                                <button style='padding:0 2pt;margin-left:5px;height:1rem;' onclick={() => {
+                                    const [v, c] = t === 'team1' ? [selectValues.team1, team1Win] : [selectValues.team2, team2Win]
                                     if (t === 'team1') {
-                                        select1Value = -1;
+                                        selectValues.team1 = -1;
                                         setTimeout(() => {
                                             team1Win = false;
                                         }, 50)
                                     } else {
-                                        select2Value = -1;
+                                        selectValues.team2 = -1;
                                         setTimeout(() => {
                                             team2Win = false;
                                         }, 50)
                                     };
                                 }}>x</button>
-                            </span>                
+                            </span>
                         {:else}
                             <span style=width:100%;height:60px;>
                                 <button style='padding:0.5rem 0.6rem;' onclick={() => {
                                     let iterNum = 0;
                                     const randomTeam = () => {
                                         const availableTeams = $remainingTeams.filter(
-                                            x => ![parseInt(select1Value), parseInt(select2Value)].includes(parseInt(x))
+                                            x => ![parseInt(selectValues.team1), parseInt(selectValues.team2)].includes(parseInt(x))
                                         )
                                         if (availableTeams.length === 0) {
                                             return
                                         }
                                         const randomId = availableTeams[Math.floor(Math.random() * availableTeams.length)];
                                         if (t === 'team1'){
-                                            select1Value = randomId;
+                                            selectValues.team1 = randomId;
                                             select1Change();
                                             if ($remainingTeams.length === 2) {
-                                                select2Value = $remainingTeams.filter(tId => tId !== select1Value)[0];
+                                                selectValues.team2 = $remainingTeams.filter(tId => tId !== selectValues.team1)[0];
                                             }
                                         } else {
-                                            select2Value = randomId;
+                                            selectValues.team2 = randomId;
                                             if ($remainingTeams.length === 2) {
-                                                select1Value = $remainingTeams.filter(tId => tId !== select2Value)[0];
+                                                selectValues.team1 = $remainingTeams.filter(tId => tId !== selectValues.team2)[0];
                                                 select1Change();
                                             }
                                         }
@@ -215,13 +203,13 @@
                                     randomTeam()
                                 }}>?</button>
                                 {#if t === 'team2'}
-                                    <button style='padding:0.5rem 0.6rem;' disabled={select1Value < 0} onclick={() => {
+                                    <button style='padding:0.5rem 0.6rem;' disabled={selectValues.team1 < 0} onclick={() => {
                                         logoClickable = false;
                                         const angle = 2 * Math.PI * Math.random();
                                         let vec = [Math.cos(angle), Math.sin(angle)];
                                         const svgRect = svgEl.getBoundingClientRect();
-                                        const teamX = $teamInfo[select1Value].projectedX;
-                                        const teamY = $teamInfo[select1Value].projectedY;
+                                        const teamX = $teamInfo[selectValues.team1].projectedX;
+                                        const teamY = $teamInfo[selectValues.team1].projectedY;
                                         const maxMultX = vec[0] < 0 ? -teamX / vec[0] : ((svgRect.right - svgRect.left) - teamX) / vec[0];
                                         const maxMultY = vec[1] < 0 ? -teamY / vec[1] : ((svgRect.bottom - svgRect.top) - teamY) / vec[1];
                                         const stepSize = 2;
@@ -236,8 +224,8 @@
                                                 ]
                                                 const vecEndEl = document.elementFromPoint(svgRect.left + checkPoint[0], svgRect.top + checkPoint[1]);
                                                 const possibleId = vecEndEl?.attributes.tId?.value
-                                                if (!!possibleId && possibleId !== select1Value) {
-                                                    select2Value = possibleId;
+                                                if (!!possibleId && possibleId !== selectValues.team1) {
+                                                    selectValues.team2 = possibleId;
                                                     break
                                                 }
                                                 mult += stepSize;
@@ -248,12 +236,17 @@
                                     }}>spin</button>
                                 {/if}
                             </span>
-                            <span style=height:1.5rem;><em>No selection</em></span>
                         {/if}
+                        <select style=margin-top:0.25rem; id={`${t}Select`} bind:value={selectValues[t]} onchange={t === 'team1' ? select1Change : () => {}}>
+                            <option value={-1}>No selection</option>
+                            {#each $remainingTeams.sort((a, b) => $teamInfo[a].school.localeCompare($teamInfo[b].school)) as tId}
+                                <option id={`select${t.replace('team', '')}${tId}`} value={tId}>{$teamInfo[tId].school}</option>
+                            {/each}
+                        </select>
                         </span>
                     </label>
                     {#if t === 'team2'}
-                        <input type=checkbox bind:checked={team2Win} id={`${t}Win`} disabled={!val} onchange={() => checkChange(t)}/>
+                        <input type=checkbox bind:checked={team2Win} id={`${t}Win`} disabled={selectValues[t] < 0} onchange={() => checkChange(t)}/>
                     {/if}
                     {#if t === 'team1'}
                         <span style=padding:20pt;font-size:20pt;>vs.</span>
@@ -262,7 +255,7 @@
             </div>
         {/if}
     </div>
-    <div style=margin-top:0.5rem;>
+    <div>
         <button
             disabled={historyInd < 0}
             onclick={backClick}
@@ -272,7 +265,7 @@
         {:else}
             <button
                 id=goButton
-                disabled={!(team1Win || team2Win) || select1Value < 0 || select2Value < 0}
+                disabled={!(team1Win || team2Win) || selectValues.team1 < 0 || selectValues.team2 < 0}
                 onclick={buttonClick}
             >
                 Continue
