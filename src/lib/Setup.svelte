@@ -56,7 +56,7 @@
     </div>
 </div>
 <div style=text-align:center;font-size:16pt>{$allTeams.length} selected</div>
-<div style='display:flex;flex-wrap:wrap;align-items:flex-start;height:10rem;overflow-y:scroll;margin-bottom:1rem;border:1pt solid grey;padding:1rem;font-size:14pt;max-width:{$width * 1.2}px;margin:auto'>
+<div style='display:flex;flex-wrap:wrap;align-items:flex-start;max-height:10rem;overflow-y:scroll;margin-bottom:1rem;border:1pt solid grey;padding:1rem;font-size:14pt;max-width:{$width * 1.2}px;margin:auto'>
   {#each sortedTeamsAndIds as [tId, t]}
     {#if inList(tId)}
       <span style=width:11rem;text-align:left;margin-bottom:0.5rem;display:flex;align-items:flex-start>
