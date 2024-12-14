@@ -6,7 +6,7 @@ import statesRaw from '../data/states.json';
 
 export const width = writable(1000);
 export const height = writable(550);
-export const league = writable('NFL');
+export const league = writable('NCAA');
 export const teamsRaw = derived(league, $league => $league === 'NCAA' ? ncaaRaw : nflRaw);
 
 export const updateWithProjection = () => {
