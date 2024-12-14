@@ -1,10 +1,13 @@
-import { writable, get } from "svelte/store";
+import { writable, derived, get } from "svelte/store";
 import { geoAlbersUsa } from 'd3-geo';
-import teamsRaw from '../data/teams.json';
+import ncaaRaw from '../data/ncaa.json';
+import nflRaw from '../data/nfl.json';
 import statesRaw from '../data/states.json';
 
 export const width = writable(1000);
 export const height = writable(550);
+export const league = writable('NFL');
+export const teamsRaw = derived(league, $league => $league === 'NCAA' ? ncaaRaw : nflRaw);
 
 export const updateWithProjection = () => {
     const projection = geoAlbersUsa()
@@ -52,7 +55,7 @@ export const updateWithProjection = () => {
             teams: []
         }
     }
-    for (const t of teamsRaw) {
+    for (const t of get(teamsRaw)) {
         t.projectedX = -1;
         t.projectedY = -1;
         const proj = projection([t.longitude, t.latitude]);
@@ -64,7 +67,7 @@ export const updateWithProjection = () => {
     }
 
     const teamsObj = {}
-    for (const t of teamsRaw) {
+    for (const t of get(teamsRaw)) {
         teamsObj[t.id] = t
     }
 

@@ -4,7 +4,7 @@
     import TeamTerritory from './TeamTerritory.svelte';
     import MappedTeamIcon from './MappedTeamIcon.svelte';
     import Arrow from './Arrow.svelte';
-    import { getInitialTerritories, mapScale } from './utils';
+    import { getInitialTerritories, mapScale, getImgUrl } from './utils';
 
     getInitialTerritories($allTeams);
     remainingTeams.update(() => {
@@ -121,10 +121,14 @@
     <div style=height:130px;>
         {#if $remainingTeams.length === 1}
         <div style=font-size:20pt;font-weight:bold;>Winner!</div>
-            <img height=65 width=65 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${$remainingTeams[0]}.png`} />
+            <img height=65 width=65 src={getImgUrl($remainingTeams[0])} />
             <div style=font-size:16pt>{$teamInfo[$remainingTeams[0]].school} {$teamInfo[$remainingTeams[0]].mascot}</div>
         {:else}
-            <div style=font-size:16pt>Select {Math.min(...Object.values(selectValues)) > 0 ? 'Winner' : 'Matchup'}</div>
+            <div style=font-size:16pt>Select {Math.min(...Object.values(selectValues)) > 0 ? 'Winner' : 'Matchup'}
+                {#if Math.min(...Object.values(selectValues)) === -1}
+                    <span style=font-size:12pt>({$remainingTeams.length} teams remain)</span>
+                {/if}
+            </div>
             <div style=display:flex;justify-content:center;>
                 {#each ['team1', 'team2'] as t}
                     {@const otherT = t === 'team1' ? 'team2' : 'team1'}
@@ -133,7 +137,7 @@
                         <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:160px;>
                         {#if selectValues[t] > 0}
                             <span style=display:flex;}>
-                                <img  style={`${win[t] ? 'border: 3pt solid #dd0;border-radius: 10pt;' : 'margin:3pt'}`} height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${selectValues[t]}.png`}/>
+                                <img  style={`${win[t] ? 'border: 3pt solid #dd0;border-radius: 10pt;' : 'margin:3pt'}`} height=60 width=60 src={getImgUrl(selectValues[t])}/>
                                 <button style='padding:0 2pt;margin-left:5px;height:1rem;' onclick={() => {
                                     selectValues[t] = -1;
                                     setTimeout(() => {
@@ -251,12 +255,12 @@
             <span style=align-content:center;padding-left:0.5rem;>Last: </span>
             <img
                 style={`height:40px;width:40px;opacity:${history[historyInd][1] === '>' ? 1 : 0.2};padding:0 0.5rem;`}
-                src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${history[historyInd][0]}.png`}
+                src={getImgUrl(history[historyInd][0])}
             >
             <span style=align-content:center>{history[historyInd][1]}</span>
             <img
-            style={`height:40px;width:40px;opacity:${history[historyInd][1] === '<' ? 1 : 0.2};padding:0 0.5rem;`}
-                src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${history[historyInd][2]}.png`}
+                style={`height:40px;width:40px;opacity:${history[historyInd][1] === '<' ? 1 : 0.2};padding:0 0.5rem;`}
+                src={getImgUrl(history[historyInd][2])}
             >
         {/if}
     </div>

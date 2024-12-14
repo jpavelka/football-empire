@@ -1,6 +1,6 @@
 <script lang="ts">
     import { teamInfo } from './stores';
-    import { mapScale } from './utils';
+    import { mapScale, getImgUrl } from './utils';
 
     export let tId;
     export let imgSize;
@@ -18,7 +18,7 @@
     y={mapScale($teamInfo[tId].projectedY) - imgSize / 2}
     width={imgSize}
     height={imgSize}
-    href={`https://a.espncdn.com/i/teamlogos/ncaa/500/${tId}.png`}
+    href={getImgUrl(tId)}
     opacity={opacity}
     onclick={onclick}
     ondblclick={ondblclick}

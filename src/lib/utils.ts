@@ -1,6 +1,13 @@
 import { get } from "svelte/store"
-import { teamInfo, stateInfo, shapeInfo, width } from "./stores"
+import { teamInfo, stateInfo, shapeInfo, width, league } from "./stores"
 
+export const getImgUrl = (id) => {
+    if (get(league) === 'NCAA') {
+        return `https://a.espncdn.com/i/teamlogos/ncaa/500/${id}.png`
+    } else {
+        return `https://a.espncdn.com/i/teamlogos/nfl/500/${id}.png`
+    }
+}
 
 export const coordsToSvgPathD = (coords) => {
     return 'M' + coords.map(p => p.map(x => mapScale(x)).join(',')).join('L')
