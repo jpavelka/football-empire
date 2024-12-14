@@ -3,13 +3,13 @@ import { geoAlbersUsa } from 'd3-geo';
 import teamsRaw from '../data/teams.json';
 import statesRaw from '../data/states.json';
 
-export const width = writable(0);
-export const height = writable(0);
+export const width = writable(1000);
+export const height = writable(550);
 
 export const updateWithProjection = () => {
     const projection = geoAlbersUsa()
-        .scale(1.2 * get(width))
-        .translate([get(width) / 2, get(height) / 2])
+        .scale(1.2)
+        .translate([1 / 2, get(height) / (2 * get(width))])
 
     let statesObj = {};
     let shapesObj = {};
@@ -53,7 +53,11 @@ export const updateWithProjection = () => {
         }
     }
     for (const t of teamsRaw) {
-        [t.projectedX, t.projectedY] = projection([t.longitude, t.latitude]);
+        t.projectedX = -1;
+        t.projectedY = -1;
+        const proj = projection([t.longitude, t.latitude]);
+        t.projectedX = proj[0];
+        t.projectedY = proj[1];
         t.originalTerritory = [];
         t.conquered = [];
         statesObj[t.state].teams.push(t.id);
@@ -75,3 +79,4 @@ export const shapeInfo = writable({})
 export const remainingTeams = writable([])
 export const selectingTeams = writable(true)
 export const allTeams = writable([])
+export const allowArrow = writable(false)

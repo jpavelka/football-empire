@@ -1,10 +1,10 @@
 <script lang="ts">
     import BaseMap from './BaseMap.svelte';
-    import { height, width, teamInfo, remainingTeams, allTeams, selectingTeams } from './stores';
+    import { height, width, teamInfo, remainingTeams, allTeams, selectingTeams, allowArrow } from './stores';
     import TeamTerritory from './TeamTerritory.svelte';
     import MappedTeamIcon from './MappedTeamIcon.svelte';
     import Arrow from './Arrow.svelte';
-    import { getInitialTerritories } from './utils';
+    import { getInitialTerritories, mapScale } from './utils';
 
     getInitialTerritories($allTeams);
     remainingTeams.update(() => {
@@ -113,8 +113,8 @@
         }
     }
     let svgEl;
-    let arrowCoords = [];
     let animate = true;
+    $: arrowCoords = [];
 </script>
 
 <div style=text-align:center>
@@ -169,9 +169,11 @@
                                 {#if selectValues[otherT] > 0}
                                     <button style='padding:1rem 0.4rem;' onclick={() => {
                                         logoClickable = false;
+                                        arrowCoords = [];
+                                        allowArrow.set(true);
                                         const svgRect = svgEl.getBoundingClientRect();
-                                        const teamX = $teamInfo[selectValues[otherT]].projectedX;
-                                        const teamY = $teamInfo[selectValues[otherT]].projectedY;
+                                        const teamX = mapScale($teamInfo[selectValues[otherT]].projectedX);
+                                        const teamY = mapScale($teamInfo[selectValues[otherT]].projectedY);
                                         const stepSize = 2;
                                         setTimeout(() => {
                                             let it = 0;

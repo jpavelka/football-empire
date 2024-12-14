@@ -1,9 +1,13 @@
 import { get } from "svelte/store"
-import { teamInfo, stateInfo, shapeInfo } from "./stores"
+import { teamInfo, stateInfo, shapeInfo, width } from "./stores"
 
 
 export const coordsToSvgPathD = (coords) => {
-    return 'M' + coords.map(p => p.join(',')).join('L')
+    return 'M' + coords.map(p => p.map(x => mapScale(x)).join(',')).join('L')
+}
+
+export const mapScale = (c) => {
+    return get(width) * c
 }
 
 const intersectLineWithBoundingBox = (

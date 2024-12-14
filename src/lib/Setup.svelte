@@ -69,16 +69,16 @@
 <svg height={$height} width={$width}>
   {#key $width}
     <BaseMap />
+    {#each Object.keys($teamInfo) as tId}
+      <MappedTeamIcon
+        tId={tId}
+        imgSize={25}
+        onclick={() => {
+          changeSelected(tId)
+        }}
+        opacity={$allTeams.includes(tId) ? 1 : 0.15}
+      />
+    {/each}
   {/key}
-  {#each Object.keys($teamInfo) as tId}
-    <MappedTeamIcon
-      tId={tId}
-      imgSize={25}
-      onclick={() => {
-        changeSelected(tId)
-      }}
-      opacity={$allTeams.includes(tId) ? 1 : 0.15}
-    />
-  {/each}
 </svg>
 </div>

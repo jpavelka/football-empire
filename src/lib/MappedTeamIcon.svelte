@@ -1,5 +1,6 @@
 <script lang="ts">
     import { teamInfo } from './stores';
+    import { mapScale } from './utils';
 
     export let tId;
     export let imgSize;
@@ -13,8 +14,8 @@
 <image
     style={noClick ? 'pointer-events:none' : ''}
     id={imgId}
-    x={$teamInfo[tId].projectedX - imgSize / 2}
-    y={$teamInfo[tId].projectedY - imgSize / 2}
+    x={mapScale($teamInfo[tId].projectedX) - imgSize / 2}
+    y={mapScale($teamInfo[tId].projectedY) - imgSize / 2}
     width={imgSize}
     height={imgSize}
     href={`https://a.espncdn.com/i/teamlogos/ncaa/500/${tId}.png`}

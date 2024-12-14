@@ -1,14 +1,15 @@
 <script lang="ts">
     import Empire from '$lib/Empire.svelte';
     import Setup from '$lib/Setup.svelte';
-    import { selectingTeams, height, width, updateWithProjection } from '$lib/stores';
+    import { selectingTeams, height, width, updateWithProjection, allowArrow } from '$lib/stores';
 
-    let clientWidth = 1000
+    let clientWidth = 1000;
     $: {
-        width.set(Math.min(1000, clientWidth))
-        height.set($width * 0.55)
-        updateWithProjection()
+        width.set(Math.min(1000, clientWidth));
+        allowArrow.set(false);
+        height.set($width * 0.55);
     }
+    updateWithProjection();
 </script>
 
 <div bind:clientWidth={clientWidth} />
