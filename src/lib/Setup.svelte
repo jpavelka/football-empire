@@ -35,8 +35,8 @@
 </script>
 
 
-<div style=font-size:20pt;text-align:center;>Select Teams:</div>
-<div style=text-align:center;font-size:16pt>
+<div style=font-size:16pt;text-align:center;>Select Teams:</div>
+<div style=text-align:center;font-size:14pt>
     Conference
     <select bind:value={selectedConference} style=margin-bottom:0.5rem>
         <option value='All'>All</option>
@@ -67,7 +67,9 @@
 </div>
 <div style=text-align:center>
 <svg height={$height} width={$width}>
-  <BaseMap />
+  {#key $width}
+    <BaseMap />
+  {/key}
   {#each Object.keys($teamInfo) as tId}
     <MappedTeamIcon
       tId={tId}

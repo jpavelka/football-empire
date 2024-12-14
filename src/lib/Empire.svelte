@@ -133,12 +133,10 @@
     let svgEl;
     let arrowCoords = [];
     let animate = true;
-
-    $: console.log(selectValues)
 </script>
 
 <div style=text-align:center>
-    <div style=height:130px;margin-top:0.5rem;>
+    <div style=height:130px;>
         {#if $remainingTeams.length === 1}
         <div style=font-size:20pt;font-weight:bold;>Winner!</div>
             <img height=65 width=65 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${$remainingTeams[0]}.png`} />
@@ -148,13 +146,13 @@
             <div style=display:flex;justify-content:center;>
                 {#each ['team1', 'team2'] as t}
                     {#if t === 'team1'}
-                        <input type=checkbox bind:checked={team1Win} id={`${t}Win`} disabled={selectValues[t] < 0} onchange={() => checkChange(t)}/>
+                        <input type=checkbox style=display:none bind:checked={team1Win} id={`${t}Win`} disabled={selectValues[t] < 0} onchange={() => checkChange(t)}/>
                     {/if}
                     <label for={`${t}Win`}>
                         <span style=display:inline-flex;flex-direction:column;align-items:center;min-width:160px;>
                         {#if selectValues[t] > 0}
-                            <span style=display:flex>
-                                <img height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${selectValues[t]}.png`}/>
+                            <span style=display:flex;}>
+                                <img  style={`${(t === 'team1' && team1Win) || (t === 'team2' && team2Win) ? 'border: 3pt solid #dd0;border-radius: 10pt;' : 'margin:3pt'}`} height=60 width=60 src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${selectValues[t]}.png`}/>
                                 <button style='padding:0 2pt;margin-left:5px;height:1rem;' onclick={() => {
                                     const [v, c] = t === 'team1' ? [selectValues.team1, team1Win] : [selectValues.team2, team2Win]
                                     if (t === 'team1') {
@@ -171,7 +169,7 @@
                                 }}>x</button>
                             </span>
                         {:else}
-                            <span style=width:100%;height:60px;>
+                            <span style=width:100%;height:60px;margin:3pt;>
                                 <button style='padding:0.5rem 0.6rem;' onclick={() => {
                                     let iterNum = 0;
                                     const randomTeam = () => {
@@ -246,7 +244,7 @@
                         </span>
                     </label>
                     {#if t === 'team2'}
-                        <input type=checkbox bind:checked={team2Win} id={`${t}Win`} disabled={selectValues[t] < 0} onchange={() => checkChange(t)}/>
+                        <input type=checkbox style=display:none bind:checked={team2Win} id={`${t}Win`} disabled={selectValues[t] < 0} onchange={() => checkChange(t)}/>
                     {/if}
                     {#if t === 'team1'}
                         <span style=padding:20pt;font-size:20pt;>vs.</span>
@@ -255,7 +253,7 @@
             </div>
         {/if}
     </div>
-    <div>
+    <div style=margin-top:0.25rem;>
         <button
             disabled={historyInd < 0}
             onclick={backClick}
@@ -291,8 +289,10 @@
             >
         {/if}
     </div>
-    <svg bind:this={svgEl} height={$height} width={$width} style=margin-top:-2rem;>
-        <BaseMap />
+    <svg bind:this={svgEl} height={$height} width={$width} style={`margin-top:-${1 + ((Math.max(500, Math.min(750, $width)) - 500) / 250)}rem;`}>
+        {#key $width}
+            <BaseMap />
+        {/key}
         {#key $remainingTeams}
             {#each $remainingTeams as tId}
                 <TeamTerritory
