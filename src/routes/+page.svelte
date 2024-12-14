@@ -8,8 +8,8 @@
         width.set(Math.min(1000, clientWidth));
         allowArrow.set(false);
         height.set($width * 0.55);
-
-    updateWithProjection();
+        $league;
+        updateWithProjection();
     }
 </script>
 

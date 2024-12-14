@@ -9,7 +9,7 @@
       return a[1].toLowerCase() > b[1].toLowerCase() ? 1 : -1
     })
     let selectedConference;
-    const inList = (tId) => {
+    $: inList = (tId) => {
       return ['All', $teamInfo[tId].conference].includes(selectedConference)
     }
     const changeSelected = (tId) => {
