@@ -55,25 +55,38 @@ export const updateWithProjection = () => {
             teams: []
         }
     }
-    for (const t of get(teamsRaw)) {
-        t.projectedX = -1;
-        t.projectedY = -1;
-        const proj = projection([t.longitude, t.latitude]);
-        t.projectedX = proj[0];
-        t.projectedY = proj[1];
-        t.originalTerritory = [];
-        t.conquered = [];
-        statesObj[t.state].teams.push(t.id);
+
+    let newTeamsStates = false;
+    const tInfVals = [...Object.values(get(teamInfo))];
+    if (tInfVals.length === 0) {
+        newTeamsStates = true;
+    } else if (tInfVals[0].league !== get(league)) {
+        newTeamsStates = true;
+    }
+    if (newTeamsStates) {
+        for (const t of get(teamsRaw)) {
+            t.projectedX = -1;
+            t.projectedY = -1;
+            const proj = projection([t.longitude, t.latitude]);
+            t.projectedX = proj[0];
+            t.projectedY = proj[1];
+            t.originalTerritory = [];
+            t.conquered = [];
+            statesObj[t.state].teams.push(t.id);
+        }
     }
 
     const teamsObj = {}
     for (const t of get(teamsRaw)) {
-        teamsObj[t.id] = t
+        teamsObj[t.id] = t;
+        teamsObj[t.id].league = get(league);
     }
 
-    teamInfo.set(teamsObj);
-    stateInfo.set(statesObj);
     shapeInfo.set(shapesObj);
+    if (newTeamsStates) {
+        teamInfo.set(teamsObj);
+        stateInfo.set(statesObj);
+    }
 }
 
 export const teamInfo = writable({})
