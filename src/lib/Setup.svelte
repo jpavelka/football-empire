@@ -4,13 +4,19 @@
     import MappedTeamIcon from '$lib/MappedTeamIcon.svelte';
     import { getImgUrl } from './utils';
 
-    $: conferences = [...new Set(Object.values($teamInfo).map(t => t.conference))].sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+    $: conferences = [...new Set(Object.values($teamInfo).map(t => t.conference))].concat(
+      $league === 'NFL' ? ['AFC', 'NFC'] : []
+    ).sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
     $: sortedTeamsAndIds = Object.keys($teamInfo).map(tId => [tId, $teamInfo[tId].school]).sort((a, b) => {
       return a[1].toLowerCase() > b[1].toLowerCase() ? 1 : -1
     })
     let selectedConference;
     $: inList = (tId) => {
-      return ['All', $teamInfo[tId].conference].includes(selectedConference)
+      if ($league === 'NFL') {
+        return ['All', $teamInfo[tId].conference, $teamInfo[tId].conference.slice(0, 3)].includes(selectedConference)
+      } else {
+        return ['All', $teamInfo[tId].conference].includes(selectedConference)
+      }
     }
     const changeSelected = (tId) => {
       const sel = document.getElementById(`select_${tId}`);
