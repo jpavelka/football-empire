@@ -39,7 +39,7 @@
                 type="rotate"
                 from={`0 ${coords[0].join(',')}`}
                 to={`1080 ${coords[0].join(',')}`}
-                begin={svgTime}
+                begin={svgTime + 0.1}
                 dur="1s"
                 repeatCount="1"
             />
