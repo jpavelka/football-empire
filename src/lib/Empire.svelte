@@ -24,6 +24,7 @@
                 selectValues[otherT] = -1
             }
         }
+        arrowCoords = [];
     }
     const checkChange = (t) => {
         const id = t + 'Win';
@@ -80,6 +81,7 @@
         })
         historyInd -= 1;
         lastWinner = '';
+        arrowCoords = [];
     }
     const forwardClick = () => {
         const [t1, direction, t2, conquered] = history[historyInd + 1];
@@ -94,6 +96,7 @@
         })
         historyInd += 1;
         setLastWinner(winner);
+        arrowCoords = [];
     }
     const imgClick = (tId) => { 
         if ($remainingTeams.includes(tId)) {
@@ -140,6 +143,7 @@
                                 <img  style={`${win[t] ? 'border: 3pt solid #dd0;border-radius: 10pt;' : 'margin:3pt'}`} height=60 width=60 src={getImgUrl(selectValues[t])}/>
                                 <button style='padding:0 2pt;margin-left:5px;height:1rem;' onclick={() => {
                                     selectValues[t] = -1;
+                                    arrowCoords = [];
                                     setTimeout(() => {
                                         win[t] = false;
                                     }, 50)
