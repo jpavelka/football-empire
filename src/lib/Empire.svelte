@@ -79,6 +79,17 @@
             t[winner].conquered = t[winner].conquered.filter(x => !conquered.includes(x));
             return t
         })
+        selectValues.team1 = t1;
+        selectChange('team1');
+        selectValues.team2 = t2;
+        selectChange('team2');
+        if (direction === '>') {
+            win.team1 = true;
+            win.team2 = false;
+        } else {
+            win.team1 = false;
+            win.team2 = true;
+        }
         historyInd -= 1;
         lastWinner = '';
         arrowCoords = [];
@@ -94,9 +105,28 @@
             t[loser].conquered = []
             return t
         })
-        historyInd += 1;
         setLastWinner(winner);
         arrowCoords = [];
+        historyInd += 1;
+        if (historyInd < history.length - 1) {
+            const [t1, direction, t2, conquered] = history[historyInd + 1];
+            selectValues.team1 = t1;
+            selectChange('team1');
+            selectValues.team2 = t2;
+            selectChange('team2');
+            if (direction === '>') {
+                win.team1 = true;
+                win.team2 = false;
+            } else {
+                win.team1 = false;
+                win.team2 = true;
+            }
+        } else {
+            selectValues.team1 = -1;
+            selectValues.team2 = -1;
+            win.team1 = false;
+            win.team2 = false;
+        }
     }
     const imgClick = (tId) => { 
         if ($remainingTeams.includes(tId)) {
