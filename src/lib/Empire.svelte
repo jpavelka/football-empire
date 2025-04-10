@@ -145,6 +145,31 @@
             }
         }
     }
+    const randomWinner = () => {
+        if (!win.team1 && !win.team2) {
+            if (Math.random() < 0.5) {
+                [win.team1, win.team2] = [true, false]
+            } else {
+                [win.team1, win.team2] = [false, true]
+            }
+        }
+        let iterNum = 0;
+        const pickRand = () => {
+            if (iterNum < (animate ? 13 : 0)) {
+                iterNum += 1;
+                win.team1 = !win.team1;
+                win.team2 = !win.team2;
+                setTimeout(pickRand, 50);
+            } else {
+                if (Math.random() < 0.5) {
+                    [win.team1, win.team2] = [true, false]
+                } else {
+                    [win.team1, win.team2] = [false, true]
+                }
+            }
+        }
+        pickRand()
+    }
     let svgEl;
     let animate = true;
     $: arrowCoords = [];
@@ -256,7 +281,14 @@
                         </span>
                     </label>
                     {#if t === 'team1'}
-                        <span style=padding:20pt;font-size:20pt;>vs.</span>
+                        <div style=display:flex;flex-direction:column;align-items:center>
+                            {#if Math.min(...Object.values(selectValues)) > 0}
+                                <button onclick={randomWinner}>Random</button>
+                            {:else}
+                                <div style=height:2.1rem/>
+                            {/if}
+                            <span style='padding:0 20pt;font-size:20pt;'>vs.</span>
+                        </div>
                     {/if}
                 {/each}
             </div>
