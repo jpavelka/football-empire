@@ -228,6 +228,9 @@
                                         }
                                     }
                                     randomTeam()
+                                    setTimeout(() => {
+                                        win = {team1: false, team2: false}
+                                    }, 1)
                                 }}>Random</button>
                                 {#if selectValues[otherT] > 0}
                                     <button style='padding:1rem 0.4rem;' onclick={() => {
