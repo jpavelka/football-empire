@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { teamInfo } from "./stores";
+    import { teamInfo, hoverId } from "./stores";
     import { coordsToSvgPathD } from "./utils";
 
     export let tId;
@@ -41,17 +41,18 @@
                 <path d={coordsToSvgPathD(c)}/>
             </clipPath>
         {/each}
-        {#key changeColor}
+        {#key changeColor, $hoverId === tId}
             <path
                 tId={tId}
                 id={`territory-${tId}-${i}`}
                 style=transform-origin:center;
                 d={coordsToSvgPathD(t.pathCoords)}
-                fill={changeColor ? 'yellow' : team.color}
+                fill={(changeColor && $hoverId === tId) ? 'yellow' : team.color}
                 opacity=0.5
                 clip-path={clipId(cId, i, t.clips.length - 1, true)}
                 on:mouseenter={() => {
                     changeColor = true;
+                    hoverId.update(() => tId);
                 }}
                 on:mouseleave={() => {
                     changeColor = false;
