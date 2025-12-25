@@ -1,8 +1,8 @@
 import { get } from "svelte/store"
 import { teamInfo, stateInfo, shapeInfo, width, league } from "./stores"
 
-export const getImgUrl = (id) => {
-    if (get(league) === 'NCAA') {
+export const getImgUrl = (id, leagueOverride=undefined) => {
+    if ((leagueOverride || get(league)) === 'NCAA') {
         return `https://a.espncdn.com/i/teamlogos/ncaa/500/${id}.png`
     } else {
         return `https://a.espncdn.com/i/teamlogos/nfl/500/${id}.png`

@@ -1,0 +1,15 @@
+{
+	"name": "Football Empire",
+	"short_name": "football-empire",
+	"start_url": "/",
+	"display": "standalone",
+	"theme_color": "#ffffff",
+	"background_color": "#000000",
+	"icons": [
+		{
+			"sizes": "any",
+			"src": "favicon.svg",
+			"type": "image/svg+xml"
+		}
+	]
+}
