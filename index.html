@@ -4,13 +4,14 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="/football-empire/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="manifest" href="/football-empire/manifest.json" crossorigin="use-credentials" />
 		
-		<link rel="modulepreload" href="/football-empire/_app/immutable/entry/start.BQZ-F3DN.js">
-		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/entry.NSBOVz5A.js">
+		<link rel="modulepreload" href="/football-empire/_app/immutable/entry/start.TfoCuLG0.js">
+		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/entry.BjXs3h9-.js">
 		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/runtime.DXUuZ_QS.js">
 		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/index.C6F24oEd.js">
 		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/utils.BQ1WKpPf.js">
-		<link rel="modulepreload" href="/football-empire/_app/immutable/entry/app.CjbWLuca.js">
+		<link rel="modulepreload" href="/football-empire/_app/immutable/entry/app.L_ikNKiO.js">
 		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/store.DbVFQg3m.js">
 		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/disclose-version.BiUt8ep-.js">
 		<link rel="modulepreload" href="/football-empire/_app/immutable/chunks/props.py4AyclU.js">
@@ -19,7 +20,7 @@
 		<div style="display: contents">
 			<script>
 				{
-					__sveltekit_j9f5oc = {
+					__sveltekit_k2qfn6 = {
 						base: "/football-empire",
 						assets: "/football-empire"
 					};
@@ -27,11 +28,17 @@
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("/football-empire/_app/immutable/entry/start.BQZ-F3DN.js"),
-						import("/football-empire/_app/immutable/entry/app.CjbWLuca.js")
+						import("/football-empire/_app/immutable/entry/start.TfoCuLG0.js"),
+						import("/football-empire/_app/immutable/entry/app.L_ikNKiO.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element);
 					});
+
+					if ('serviceWorker' in navigator) {
+						addEventListener('load', function () {
+							navigator.serviceWorker.register('/football-empire/service-worker.js');
+						});
+					}
 				}
 			</script>
 		</div>
