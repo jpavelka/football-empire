@@ -1,7 +1,8 @@
 {
 	"name": "Football Empire",
 	"short_name": "football-empire",
-	"start_url": "/",
+	"start_url": "/football-empire/",
+	"scope": "/football-empire/",
 	"display": "standalone",
 	"theme_color": "#ffffff",
 	"background_color": "#000000",
