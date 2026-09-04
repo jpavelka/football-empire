@@ -13,6 +13,8 @@ headers = {
 
 response = requests.get('https://api.collegefootballdata.com/teams/fbs', headers=headers)
 data = response.json()
+if not response.ok or not isinstance(data, list):
+    raise RuntimeError(f'Unexpected response from collegefootballdata.com (status {response.status_code}): {data}')
 for i, d in enumerate(data):
     new_d = {
         **{k: d[k] for k in ['school', 'mascot', 'conference', 'color', 'id']},
