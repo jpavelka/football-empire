@@ -10,6 +10,12 @@ const precache_list = [...build, ...files, ...prerendered].filter(
 	revision: version,
 }))
 
+// Activate new deploys immediately instead of waiting for every open tab /
+// installed-app window to close; otherwise users keep seeing stale data
+// (e.g. old conference memberships) indefinitely.
+self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
+
 // cleanupOutdatedCaches()
 precacheAndRoute(precache_list)
 
